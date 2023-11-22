@@ -67,7 +67,7 @@ ls ML*/ML* | cut -d/ -f1 | uniq | while read id; do
         wait
         RUNNING_PROCESSES=0
     fi
-done
+done    
 
 ###############################################################################################################################
 # featurecount count the reads number
