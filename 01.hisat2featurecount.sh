@@ -1,6 +1,6 @@
 #! /bin/bash
 ###############################################################################################################################
-# ~/5t_wgs_20230814_bam/20231118-deer-rna-seq
+# /home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq
 # ./hismap/sam
 # ./hismap
 ###############################################################################################################################
@@ -10,7 +10,7 @@ hisat2-build -p 4 GCF_910594005.1_mCerEla1.1_genomic.fna  GCF_910594005.1_mCerEl
 
 ###############################################################################################################################
 # filter low quality reads and cut adapter use fastp
-fastp="~/miniconda3/bin/fastp"
+fastp="/home/sll/miniconda3/bin/fastp"
 
 ls ML*/ML* | cut -d/ -f1 | uniq | while read id; do
     sample=${id}
@@ -21,13 +21,13 @@ done
 
 ###############################################################################################################################
 # align use hisat2
-hisat2="~/miniconda3/bin/hisat2"
+hisat2="/home/sll/miniconda3/bin/hisat2"
 genomefa="/home/ysq/20221108-deer-depth/20231007-deer-sift-data/reddeer-ref-mCerEla1.1/GCF_910594005.1_mCerEla1.1_genomic"
 
 MAX_PROCESSES=4
 RUNNING_PROCESSES=0
 mkdir -p ./hismap/sam/
-sam_dir="~/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
+sam_dir="/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
 
 ls ML*/ML* | cut -d/ -f1 | uniq | while read id; do
     sample=${id}
@@ -36,21 +36,19 @@ ls ML*/ML* | cut -d/ -f1 | uniq | while read id; do
         $hisat2 -p 8 -x $genomefa -1 ${sample}_1.filter.fq.gz -2 ${sample}_2.filter.fq.gz -S ${sam_dir}/${sample}.hismap.sam &
         RUNNING_PROCESSES=$((RUNNING_PROCESSES+1))
     fi
-    # if the maximum number of processes is reached, wait for them to finish
     if [ $RUNNING_PROCESSES -eq $MAX_PROCESSES ]; then
-        # if a pid is final, next was run, maxprocess=$MAX_PROCESSES
-        wait -n
+        wait
         RUNNING_PROCESSES=0
     fi
 done
 
 ###############################################################################################################################
 # sort and reformat use samtools
-samtools="~/miniconda3/bin/samtools"
+samtools="/home/sll/miniconda3/bin/samtools"
 
 # set dir that save sam and bam file
-sam_dir="~/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
-bam_dir="~/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap"
+sam_dir="/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
+bam_dir="/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap"
 MAX_PROCESSES=4
 RUNNING_PROCESSES=0
 
@@ -59,14 +57,14 @@ ls ML*/ML* | cut -d/ -f1 | uniq | while read id; do
     if [ -f ${sam_dir}/${sample}.hismap.sam ]; then
         $samtools sort -@ 8 -O bam -o ${bam_dir}/${sample}_sort.bam ${sam_dir}/${sample}.hismap.sam &
         pid=$!
-        RUNNING_PROCESSES=$((RUNNING_PROCESSES+1))
-        if not kill -0 $pid 2>/dev/null; then
+        if ! kill -0 $pid 2>/dev/null; then
             $samtools index ${bam_dir}/${sample}_sort.bam ${bam_dir}/${sample}_sort.bam.index &
+        else
             RUNNING_PROCESSES=$((RUNNING_PROCESSES+1))
         fi
     fi
     if [ $RUNNING_PROCESSES -eq $MAX_PROCESSES ]; then
-        wait -n
+        wait
         RUNNING_PROCESSES=0
     fi
 done
