@@ -22,6 +22,7 @@ sample=${id%%/*}
 $fastp -i ${sample}/${sample}_1.clean.fq.gz -I ${sample}/${sample}_2.clean.fq.gz -g -q 15 -n 5 -l 150 -u 50 -o ${sample}_1.filter.fq.gz -O ${sample}_2.filter.fq.gz -h ${sample}.fastp.html
 
 # reads mapping  ----hisat2
+mkdir /home/sll/202311-sika_reddeer-RNAseq/sam
 $hisat2 -p 8 -x $genomefa -1 ${sample}_1.filter.fq.gz -2 ${sample}_2.filter.fq.gz -S /home/sll/202311-sika_reddeer-RNAseq/sam/${sample}.hismap.sam      
 
 # sam to bam and sorted and index for *sort.bam file
