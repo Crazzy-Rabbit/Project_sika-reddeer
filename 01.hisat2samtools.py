@@ -1,9 +1,13 @@
 mkdir -p ./hismap/sam/ # remove this code when use the python script
-### python methon for muti process
 #! usr/bin/python
+##################################
+### python method for muti process
+### hisat2 align 
+### samtools sort and index
+### max process = 4
+##################################
 import os
 import subprocess
-# muti process
 from concurrent.futures import ThreadPoolExecutor
 
 # set dir that save sam and bam file
