@@ -35,7 +35,7 @@ def process_sample(sample):
     # if there are fq1_file and fq2_file
     if os.path.isfile(fq1_file) and os.path.isfile(fq2_file):
         # align use hisat2
-        subprocess.run([hisat2, "-p", "8", "-x", genomefa, "-1", fqt1_file, "-2", fqt2_file, "-S", sam_file])
+        subprocess.run([hisat2, "-p", "8", "-x", genomefa, "-1", fq1_file, "-2", fq2_file, "-S", sam_file])
         # sort sam file
         subprocess.run([samtools, "sort", "-@", "8", "-O", "bam", "-o", bam_file, sam_file])
         # index bam file
