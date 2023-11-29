@@ -14,17 +14,9 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
 # set dir that save sam and bam file
-##################################
-sam_dir = "/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
-bam_dir = "/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap"     
-fastp="/home/sll/miniconda3/bin/fastp"
-hisat2 = "/home/sll/miniconda3/bin/hisat2"
-samtools = "/home/sll/miniconda3/bin/samtools"
-featureCounts = "/home/sll/miniconda3/bin/featureCounts"
-multiqc = "/home/sll/miniconda3/bin/multiqc"
+##################################    
 genomefa = "/home/ysq/20221108-deer-depth/20231007-deer-sift-data/reddeer-ref-mCerEla1.1/GCF_910594005.1_mCerEla1.1_genomic"
 genomegtf = "/home/ysq/20221108-deer-depth/20231007-deer-sift-data/reddeer-ref-mCerEla1.1/GCF_910594005.1_mCerEla1.1_genomic.gtf"
-fq_dir = f"/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/{sample}"
 ##################################
 
 def process_sample(sample):
@@ -63,7 +55,9 @@ def filter_sample(sample):
 samples = [id.split(".")[0] for id in os.listdir(sam_dir) if id.startswith("ML")]
 
 os.system("mkdir -p ./hismap/sam/")
-
+sam_dir = "/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
+bam_dir = "/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap" 
+fq_dir = f"/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/{sample}"
 # set max processes and run
 MAX_PROCESSES = 4
 with ThreadPoolExecutor(max_workers=MAX_PROCESSES) as executor:
@@ -74,5 +68,5 @@ with ThreadPoolExecutor(max_workers=MAX_PROCESSES) as executor:
 
 # run featurecount and multiQC after all file index
 os.system("mkdir /home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/counts")
-os.system(f"$featureCounts -p -t exon -g gene_id -M -T 8 -a $genomegtf -o ./hismap/counts/all.featurecounts.txt *_sort.bam")
-os.system(f"$multiqc ./hismap/counts/all.featurecounts.txt.summary -o  ./hismap/counts/all.counts.summary")
+os.system(f"featureCounts -p -t exon -g gene_id -M -T 8 -a $genomegtf -o ./hismap/counts/all.featurecounts.txt *_sort.bam")
+os.system(f"multiqc ./hismap/counts/all.featurecounts.txt.summary -o  ./hismap/counts/all.counts.summary")
