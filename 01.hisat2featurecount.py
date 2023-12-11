@@ -54,7 +54,7 @@ def filter_sample(sample):
 # samples = subprocess.check_output("ls ML*/ML* | cut -d/ -f1 | uniq", shell=True).decode().splitlines()
 samples = [id.split(".")[0] for id in os.listdir(sam_dir) if id.startswith("ML")]
 
-os.system("mkdir -p ./hismap/sam/")
+os.makedirs("/hismap/sam/")
 sam_dir = "/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap/sam"
 bam_dir = "/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/hismap" 
 fq_dir = f"/home/sll/5t_wgs_20230814_bam/20231118-deer-rna-seq/{sample}"
